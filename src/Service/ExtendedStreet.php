@@ -22,7 +22,7 @@
 			);
 		}
 
-		public function getCityName($street){
+		protected function getCityName($street){
 			$results=[];
 			foreach ($street->getDistricts()as $district){
 				$city=$district->getCity()->getName();
@@ -33,7 +33,7 @@
 			return $results;
 		}
 
-		public function getDistrictsName($street){
+		protected function getDistrictsName($street){
 			$results=[];
 			foreach ($street->getDistricts()as $district){
 				$results[]=$district->getName();

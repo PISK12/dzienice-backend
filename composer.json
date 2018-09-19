@@ -14,11 +14,14 @@
         "symfony/framework-bundle": "*",
         "symfony/maker-bundle": "^1.7",
         "symfony/orm-pack": "^1.0",
+        "symfony/test-pack": "^1.0",
         "symfony/twig-bundle": "*",
         "symfony/yaml": "*"
     },
     "require-dev": {
+        "symfony/browser-kit": "*",
         "symfony/dotenv": "*",
+        "symfony/phpunit-bridge": "*",
         "symfony/web-server-bundle": "*"
     },
     "config": {

@@ -2,13 +2,13 @@
 	/**
 	 * Created by PhpStorm.
 	 * User: Dell
-	 * Date: 18/09/2018
-	 * Time: 19:52
+	 * Date: 19/09/2018
+	 * Time: 14:34
 	 */
 
 	namespace App\Controller\api;
 
-	use Symfony\Component\HttpFoundation\Request;
+	use App\Service\ExtendedCity;
 	use Symfony\Component\HttpFoundation\Response;
 
 	use FOS\RestBundle\View\View;
@@ -17,49 +17,53 @@
 	use FOS\RestBundle\Controller\Annotations\View as ViewAnnotation;
 	use FOS\RestBundle\Controller\Annotations as Rest;
 
-	use App\Entity\Street;
-
-	use App\Service\ExtendedStreet;
+	use App\Entity\City;
 
 
-	class StreetController extends FOSRestController
+
+	class CityController extends FOSRestController
 	{
 		/**
-		 * @Rest\Get("/streets/")
+		 * @Rest\Get("/city/")
 		 * @ViewAnnotation()
 		 */
 		public function getAction(){
-			$extendedStreet = new ExtendedStreet();
-			$rawResults=$this->getDoctrine()->getRepository(Street::class)->findAll();
+			$rawResults=$this->getDoctrine()->getRepository(City::class)->findAll();
 			if($rawResults==null){
 				return new View("there are on user exist",Response::HTTP_NOT_FOUND);
 			}
 
 			$results=[];
 			foreach($rawResults as $result){
-				$results[]=$extendedStreet->getAllPublicInformation($result);
+				$districts=[];
+				foreach ($result->getDistricts() as $district){
+					$districts[]=$district->getName();
+				}
+				$results[]=array(
+					"id"=>$result->getId(),
+					"name"=>$result->getName(),
+					"districts"=>$districts,
+				);
 			}
-			//var_dump($results);
 			$view = View::create()
 				->setStatusCode(Response::HTTP_OK)
 				->setData($results);
 			return $this->handleView($view);
 		}
-
 		/**
-		 * @Rest\Get("/streets/{id<\d+>}")
+		 * @Rest\Get("/city/{id<\d+>}")
 		 * @ViewAnnotation()
 		 */
 		public function idAction($id){
-			$extendedStreet = new ExtendedStreet();
-			$results=$this->getDoctrine()->getRepository(Street::class)->find($id);
-			if($results==null){
+			$city=$this->getDoctrine()->getRepository(City::class)->find($id);
+			if($city==null){
 				return new View("there are on user exist",Response::HTTP_NOT_FOUND);
 			}
-			$result=$extendedStreet->getAllPublicInformation($results);
+
+			$extendedCity=new ExtendedCity();
 			$view = View::create()
 				->setStatusCode(Response::HTTP_OK)
-				->setData($result);
+				->setData($extendedCity->getAllPublicInformation($city));
 			return $this->handleView($view);
 		}
 	}
