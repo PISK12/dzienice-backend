@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,9 +34,14 @@ class Street
     private $ShortName;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\District", inversedBy="streets")
+     * @ORM\ManyToMany(targetEntity="App\Entity\District", inversedBy="streets")
      */
     private $Districts;
+
+    public function __construct()
+    {
+        $this->Districts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -77,14 +84,28 @@ class Street
         return $this;
     }
 
-    public function getDistricts(): ?District
+    /**
+     * @return Collection|District[]
+     */
+    public function getDistricts(): Collection
     {
         return $this->Districts;
     }
 
-    public function setDistricts(?District $Districts): self
+    public function addDistrict(District $district): self
     {
-        $this->Districts = $Districts;
+        if (!$this->Districts->contains($district)) {
+            $this->Districts[] = $district;
+        }
+
+        return $this;
+    }
+
+    public function removeDistrict(District $district): self
+    {
+        if ($this->Districts->contains($district)) {
+            $this->Districts->removeElement($district);
+        }
 
         return $this;
     }

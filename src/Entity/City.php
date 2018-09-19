@@ -24,7 +24,7 @@ class City
     private $Name;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\District", mappedBy="idCity")
+     * @ORM\OneToMany(targetEntity="App\Entity\District", mappedBy="City")
      */
     private $districts;
 
@@ -62,7 +62,7 @@ class City
     {
         if (!$this->districts->contains($district)) {
             $this->districts[] = $district;
-            $district->setIdCity($this);
+            $district->setCity($this);
         }
 
         return $this;
@@ -73,8 +73,8 @@ class City
         if ($this->districts->contains($district)) {
             $this->districts->removeElement($district);
             // set the owning side to null (unless already changed)
-            if ($district->getIdCity() === $this) {
-                $district->setIdCity(null);
+            if ($district->getCity() === $this) {
+                $district->setCity(null);
             }
         }
 

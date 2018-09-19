@@ -27,10 +27,10 @@ class District
      * @ORM\ManyToOne(targetEntity="App\Entity\City", inversedBy="districts")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $idCity;
+    private $City;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Street", mappedBy="Districts")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Street", mappedBy="Districts")
      */
     private $streets;
 
@@ -56,14 +56,14 @@ class District
         return $this;
     }
 
-    public function getIdCity(): ?City
+    public function getCity(): ?City
     {
-        return $this->idCity;
+        return $this->City;
     }
 
-    public function setIdCity(?City $idCity): self
+    public function setCity(?City $City): self
     {
-        $this->idCity = $idCity;
+        $this->City = $City;
 
         return $this;
     }
@@ -80,7 +80,7 @@ class District
     {
         if (!$this->streets->contains($street)) {
             $this->streets[] = $street;
-            $street->setDistricts($this);
+            $street->addDistrict($this);
         }
 
         return $this;
@@ -90,10 +90,7 @@ class District
     {
         if ($this->streets->contains($street)) {
             $this->streets->removeElement($street);
-            // set the owning side to null (unless already changed)
-            if ($street->getDistricts() === $this) {
-                $street->setDistricts(null);
-            }
+            $street->removeDistrict($this);
         }
 
         return $this;

@@ -86,11 +86,13 @@
 					foreach ($districts as $nameDistrict){
 						$nameDistrict=trim($nameDistrict);
 						if(!in_array($nameDistrict,$this->cacheDistrict)){
-							$objectDistrict=$this->em->getRepository(District::class)->findOneBy(["Name"=>$nameDistrict,"idCity"=>$city]);
+							$objectDistrict=$this->em
+								->getRepository(District::class)
+								->findOneBy(["Name"=>$nameDistrict,"City"=>$city]);
 							if(empty($objectDistrict)){
 								$objectDistrict = new District();
 								$objectDistrict
-									->setIdCity($city)
+									->setCity($city)
 									->setName($nameDistrict);
 
 								$this->em->persist($objectDistrict);
@@ -98,7 +100,7 @@
 							}
 							$this->cacheDistrict[$nameDistrict]=$objectDistrict;
 						}
-						$objectStreet->setDistricts($this->cacheDistrict[$nameDistrict]);
+						$objectStreet->addDistrict($this->cacheDistrict[$nameDistrict]);
 					}
 					$this->em->persist($objectStreet);
 					$this->em->flush();
