@@ -20,8 +20,9 @@
 		}
 		protected function getDistrictsName($city){
 			$districts=[];
+			$extendedDistricts=new ExtendedDistricts();
 			foreach($city->getDistricts() as $district){
-				$districts[]=$district->getName();
+				$districts[$district->getName()]=$extendedDistricts->getStreetsName($district);
 			}
 			return $districts;
 		}

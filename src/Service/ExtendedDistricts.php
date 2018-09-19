@@ -11,5 +11,19 @@
 
 	class ExtendedDistricts
 	{
-
+		public function getAllPublicInformation($district){
+			return array(
+				"id"=>$district->getId(),
+				"name"=>$district->getName(),
+				"city"=>$district->getCity()->getName(),
+				"streets"=>$this->getStreetsName($district)
+			);
+		}
+		public function getStreetsName($district){
+			$streets=[];
+			foreach ($district->getStreets() as $street){
+				$streets[]=$street->getName();
+			}
+			return $streets;
+		}
 	}
