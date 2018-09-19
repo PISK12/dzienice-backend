@@ -32,7 +32,7 @@
 			$extendedStreet = new ExtendedStreet();
 			$rawResults=$this->getDoctrine()->getRepository(Street::class)->findAll();
 			if($rawResults==null){
-				return new View("there are on user exist",Response::HTTP_NOT_FOUND);
+				return new View("there are on street exist",Response::HTTP_NOT_FOUND);
 			}
 
 			$results=[];
@@ -47,6 +47,31 @@
 		}
 
 		/**
+		 * @Rest\Get("/streets/search/")
+		 * @ViewAnnotation()
+		 */
+		public function searchAction(Request $request){
+			$searchStreetName=$request->get("streetName");
+			if(!$searchStreetName or $searchStreetName=="ulica" or $searchStreetName=="ulicy" or $searchStreetName=="ul."){
+				return new View("there are on street exist",Response::HTTP_NOT_FOUND);
+			}
+			$rawResults=$this->getDoctrine()->getRepository(Street::class)
+				->searchStreetByName($searchStreetName);
+			if($rawResults==null){
+				return new View("there are on street exist",Response::HTTP_NOT_FOUND);
+			}
+			$extendedStreet = new ExtendedStreet();
+			$results=[];
+			foreach($rawResults as $result){
+				$results[]=$extendedStreet->getAllPublicInformation($result);
+			}
+			$view = View::create()
+				->setStatusCode(Response::HTTP_OK)
+				->setData($results);
+			return $this->handleView($view);
+		}
+
+		/**
 		 * @Rest\Get("/streets/{id<\d+>}")
 		 * @ViewAnnotation()
 		 */
@@ -54,7 +79,7 @@
 			$extendedStreet = new ExtendedStreet();
 			$results=$this->getDoctrine()->getRepository(Street::class)->find($id);
 			if($results==null){
-				return new View("there are on user exist",Response::HTTP_NOT_FOUND);
+				return new View("there are on street exist",Response::HTTP_NOT_FOUND);
 			}
 			$result=$extendedStreet->getAllPublicInformation($results);
 			$view = View::create()

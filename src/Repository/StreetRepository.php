@@ -19,6 +19,16 @@ class StreetRepository extends ServiceEntityRepository
         parent::__construct($registry, Street::class);
     }
 
+    public function searchStreetByName($streetName){
+    	return $this->createQueryBuilder('s')
+		    ->orWhere('s.Name LIKE :streetName')
+		    ->orWhere('s.NameInGenitive LIKE :streetName')
+		    ->orWhere('s.ShortName LIKE :streetName')
+		    ->setParameter('streetName',"%".$streetName."%")
+		    ->getQuery()
+		    ->getResult();
+    }
+
 //    /**
 //     * @return Street[] Returns an array of Street objects
 //     */
